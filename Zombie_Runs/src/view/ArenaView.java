@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -23,6 +24,11 @@ import model.Coins;
 import model.Hurdles;
 import model.Player;
 
+/**
+ * 
+ * @author pezza
+ *
+ */
 @SuppressWarnings("serial")
 public class ArenaView extends JPanel implements IView {
 	
@@ -37,28 +43,32 @@ public class ArenaView extends JPanel implements IView {
 	private int IMAGE_HEIGHT;
 
 	private Arena world;
-
-	private BufferedImage backgroundImg;
-	private BufferedImage coinsImg;
-	private BufferedImage hurdlImg;
 	
-	// Images for each animation
+	private BufferedImage backgroundImg;	//Da risolvere ?!
+	private BufferedImage coinsImg;			//Da convertire in sprite sheet
+	private BufferedImage hurdlImg;			//Da convertire in sprite sheet
+	
+	// Images for each animation of the player
 	private BufferedImage[] walkingUp = {Sprite.getSprite(0,3), Sprite.getSprite(2,3)};
 	private BufferedImage[] walkingDown = {Sprite.getSprite(0,0), Sprite.getSprite(2,0)};
 	private BufferedImage[] walkingLeft = {Sprite.getSprite(0, 1), Sprite.getSprite(2, 1)}; 
 	private BufferedImage[] walkingRight = {Sprite.getSprite(0, 2), Sprite.getSprite(2, 2)};
 	private BufferedImage[] stands = {Sprite.getSprite(1, 3)};
 
-	// different animation stats
+	// Different player's animations 
 	private Animation walkUp = new Animation(walkingUp, 5);
 	private Animation walkDown = new Animation(walkingDown, 5);
 	private Animation walkLeft = new Animation(walkingLeft, 5);
 	private Animation walkRight = new Animation(walkingRight, 5);
 	private Animation standing = new Animation(stands, 5);
 
-	// initial position
-	private Animation animation = standing;
+	// Default position of the player
+	private Animation player = standing;
 	
+	/**
+	 * 
+	 * @param world
+	 */
 	public ArenaView(Arena world) {
 
 		this.world = world;
@@ -72,9 +82,8 @@ public class ArenaView extends JPanel implements IView {
 	private void loadImages() {
 
 		try {
-			this.backgroundImg = ImageIO.read(getClass().getResource("img/background.jpg"));
-			this.coinsImg = ImageIO.read(getClass().getResource("img/coin/0.5x/Tavola disegno 1@0.5x.png"));
-			//this.hurdlImg = ImageIO.read(getClass().getResource("img/hurdl.jpg"));
+			this.backgroundImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/res/background.jpg"));
+			this.coinsImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/res/coin/0.5x/Tavola disegno 1@0.5x.png"));
 			
             IMAGE_HEIGHT = backgroundImg.getHeight();
             
@@ -84,34 +93,32 @@ public class ArenaView extends JPanel implements IView {
 		}
 
 	}
-	
-	public Animation getAnimation() {
-		return animation;
-	}
-	
+		
 	public void setAnimation(String str) {
+		
 		if(str == "upPressed") {
-			animation = walkUp;
-			animation.start();
+			player = walkUp;
+			player.start();
 		}
 		if(str == "downPressed") {
-			animation = walkDown;
-			animation.start();
+			player = walkDown;
+			player.start();
 		}
 		if(str == "leftPressed") {
-			animation = walkLeft;
-			animation.start();
+			player = walkLeft;
+			player.start();
 		}
 		if(str == "rightPressed") {
-			animation = walkRight;
-			animation.start();
-		}		
+			player = walkRight;
+			player.start();
+		}
+		
 	}
 	
 	public void resetAnimation() {
-		animation.stop();
-		animation.reset();
-		animation = standing;
+		player.stop();
+		player.reset();
+		player = standing;
 	}
 
 	@Override
@@ -134,7 +141,10 @@ public class ArenaView extends JPanel implements IView {
 		}
 		
 	}
-
+	/**
+	 * 
+	 * @param g
+	 */
 	protected void transform(Graphics2D g) {
 
 		final int w = this.getWidth();
@@ -148,12 +158,25 @@ public class ArenaView extends JPanel implements IView {
 		g.transform(move);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param g
+	 * @param p
+	 * @param scale
+	 */
 	private void drawPlayer(Graphics2D g, Player p, Double scale) {	
-		drawImageOn(g, p, animation.getSprite(), scale);
+		drawImageOn(g, p, player.getSprite(), scale);
 		drawLife(g, p);
 	}
-
+	
+	/**
+	 * 
+	 * @param g
+	 * @param p
+	 * @param img
+	 * @param scale
+	 */
 	private void drawImageOn(Graphics2D g, Body p, BufferedImage img, double scale) {
 
 		AffineTransform ot = g.getTransform();
@@ -194,6 +217,11 @@ public class ArenaView extends JPanel implements IView {
 
 	}
 
+	/**
+	 * 
+	 * @param g
+	 * @param p
+	 */
 	private void drawLife(Graphics2D g, Player p) {
 
 		Vector2 c = p.getWorldCenter();
@@ -210,14 +238,20 @@ public class ArenaView extends JPanel implements IView {
 				(int)(0.25*scaling));
 
 	}
-
+	
+	/**
+	 * 
+	 */
 	@Override
 	public void update() {
 		moveBackground();
-		animation.update();
+		player.update();
 		repaint();
 	}
 	
+	/**
+	 * DA FIXARE
+	 */
     private void initImagePoints() {
         dx1 = -250;
         dy1 = -400;
@@ -229,6 +263,9 @@ public class ArenaView extends JPanel implements IView {
         srcy2 = DIM_H;
     }
 	
+    /**
+     * DA FIXARE
+     */
 	public void moveBackground() {
         if (srcy1 >  IMAGE_HEIGHT) {
             srcy1 = 0;

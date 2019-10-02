@@ -1,9 +1,15 @@
+
 import javax.swing.JFrame;
 
 import view.*;
 import control.Controller;
 import model.*;
 
+/**
+ * 
+ * @author pezza
+ *
+ */
 public class Main {
 	
 	private static void createAndShowGui() {
@@ -16,7 +22,7 @@ public class Main {
 		world.addView(vista);
 		//world.addView(stato);
 		
-		JFrame frame = new JFrame("GAME NAME");
+		JFrame frame = new JFrame("ZOMBIE RUNS");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(vista);
 		//frame.add(stato, BorderLayout.SOUTH);
@@ -25,6 +31,10 @@ public class Main {
 		frame.setVisible(true);
 		frame.setResizable(false);
 		controllore.start();
+		
+		if(world.getPlayer().getCurrentHP() < 0) {
+			controllore.stop();
+		}
 		
 	}
 	

@@ -14,6 +14,11 @@ import model.Arena;
 import model.Player;
 import view.ArenaView;
 
+/**
+ * 
+ * @author pezza
+ *
+ */
 public class Controller   {
 
 	private int fps = 25;
@@ -33,7 +38,7 @@ public class Controller   {
 		this.world = world;
 		this.view = view;
 		this.runner = this.world.getPlayer();
-		
+
 		upPressed = false;
 		downPressed = false;
 		leftPressed = false;
@@ -45,16 +50,27 @@ public class Controller   {
 		this.timer = new Timer(1000/fps, timerListener);
 
 	}
-
+	
+	/**
+	 * OK
+	 * @return
+	 */
 	public KeyListener getKeyListener() {
 		return keyListener;
 	}
 
-
+	/**
+	 * OK
+	 * @param keyListener
+	 */
 	public void setKeyListener(KeyListener keyListener) {
 		this.keyListener = keyListener;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	private KeyListener createKeyListener() {
 		return new KeyAdapter() {
 
@@ -62,7 +78,7 @@ public class Controller   {
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_SPACE)
 				{
-					
+					//SPARA ???
 				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_W) {
 					upPressed = false;
@@ -84,7 +100,7 @@ public class Controller   {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				
+
 				if (e.getExtendedKeyCode() == KeyEvent.VK_W) {
 					upPressed = true;
 				}
@@ -99,9 +115,13 @@ public class Controller   {
 				}
 			}
 		};
-		
-	}
 
+	}
+	
+	/**
+	 * OK
+	 * @return
+	 */
 	private ActionListener createTimerListener() {
 		return new ActionListener() {
 
@@ -115,25 +135,26 @@ public class Controller   {
 					view.setAnimation("downPressed");
 					runner.applyForce(new Vector2(0,-1));
 				}
-				if(leftPressed) {
-					runner.applyForce(new Vector2(-1,0));
-					view.setAnimation("leftPressed");
-				}
 				if (rightPressed) {
-					runner.applyForce(new Vector2(1,0));
 					view.setAnimation("rightPressed");
+					runner.applyForce(new Vector2(1,0));
+				}
+
+				if(leftPressed) {
+					view.setAnimation("leftPressed");
+					runner.applyForce(new Vector2(-1,0));
 				}
 
 				world.updatev(1.0/fps);
 			}
 		};
-		
+
 	}
 
 	public void start() {
 		timer.start();
 	}
-	
+
 	public void stop() {
 		timer.stop();
 	}
