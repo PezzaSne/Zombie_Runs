@@ -82,8 +82,8 @@ public class ArenaView extends JPanel implements IView {
 	private void loadImages() {
 
 		try {
-			this.backgroundImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/res/background.jpg"));
-			this.coinsImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/res/coin/0.5x/Tavola disegno 1@0.5x.png"));
+			this.backgroundImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/background.jpg"));
+			this.coinsImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/coin/0.5x/Tavola disegno 1@0.5x.png"));
 			
             IMAGE_HEIGHT = backgroundImg.getHeight();
             

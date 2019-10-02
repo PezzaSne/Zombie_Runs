@@ -21,7 +21,7 @@ public class Sprite {
         BufferedImage sprite = null;
 
         try {
-            sprite = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/res/" + file + ".png"));
+            sprite = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/" + file + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
