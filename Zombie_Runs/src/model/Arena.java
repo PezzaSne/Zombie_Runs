@@ -8,6 +8,7 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.CollisionAdapter;
 import org.dyn4j.dynamics.World;
+import org.dyn4j.geometry.Vector2;
 
 import view.IView;
 
@@ -24,10 +25,9 @@ public class Arena extends World {
 
 	private Player runner;
 	private List<Coins> coins;
-	private List<Hurdles> barriers;
+	private List<Ground> grounds;
 
 	private double spawnTimeout = 2;
-	private double spawnTimer = spawnTimeout;
 	
 	/**
 	 * 
@@ -36,7 +36,7 @@ public class Arena extends World {
 		
 		views = new ArrayList<IView>();
 		coins = new ArrayList<Coins>();
-		barriers = new ArrayList<Hurdles>();
+		grounds = new ArrayList<Ground>();
 
 		initArena();
 
@@ -54,12 +54,19 @@ public class Arena extends World {
 	 */
 	private void initArena() {
 
-		setGravity(ZERO_GRAVITY);
+		setGravity(new Vector2(0, -2));
 		setBounds(bounds);
 
 		runner = new PlayerA("player");
-		runner.translate(0, -3);
+		runner.translate(0, -3.8);
 		addBody(runner);
+		
+		for(int i = 0; i < 32; i++) {
+			Ground g = new Ground();
+			grounds.add(g);
+			g.translate((i*.5)-8,-4.5);
+			addBody(g);					
+		}
 		
 	}
 	
@@ -83,8 +90,45 @@ public class Arena extends World {
 	 * 
 	 * @return
 	 */
-	public List<Hurdles> getHurdles() {
-		return barriers;
+	public List<Ground> getGround() {
+		return grounds;
+	}
+	
+	public void addGroundRight() {
+		
+		Ground last = grounds.get(grounds.size() - 1);
+		Vector2 c = last.getWorldCenter();
+		Ground first = grounds.get(0);
+		Vector2 cF = first.getWorldCenter();
+		//System.out.println(cF.x);
+		System.out.println(grounds.size()-1);
+
+		if(c.x > 8) {
+			
+			Ground g = new Ground();
+			grounds.add(0,g);
+			g.translate(cF.x-0.4,-4.5);
+			addBody(g);	
+		}
+		
+	}
+	
+	public void addGroundLeft() {
+		
+		Ground last = grounds.get(grounds.size() - 1);
+		Vector2 c = last.getWorldCenter();
+		Ground first = grounds.get(0);
+		Vector2 cF = first.getWorldCenter();
+		System.out.println(grounds.size()-1);
+		
+		if(cF.x < -8) {
+			
+			Ground g = new Ground();
+			grounds.add(grounds.size(),g);
+			g.translate(c.x+.5,-4.5);
+			addBody(g);	
+		}
+		
 	}
 	
 	/**
@@ -115,19 +159,14 @@ public class Arena extends World {
 		for(Body b : allB) {
 			if(!(b instanceof PlayerA))
 			{
-				if(b instanceof Hurdles) {
-					((Hurdles) b).update(elapsedTime);
+				if(b instanceof Ground) {
+					((Ground) b).update(elapsedTime);
 				}
 				else if(b instanceof Coins) {
 					((Coins) b).update(elapsedTime);
 				}
 
 			}
-		}
-
-		spawnTimer -= elapsedTime;
-		if(spawnTimer <= 0) {
-			spawnTimer = spawnTimeout;
 		}
 
 		runner.update(elapsedTime);
@@ -141,8 +180,7 @@ public class Arena extends World {
 	 */
 	private void deleteBody(Body b) {
 
-		if ( b instanceof Hurdles ) {
-			barriers.remove(b);
+		if ( b instanceof Ground ) {
 		} else if  ( b instanceof Coins ) {
 			coins.remove(b);
 		}
@@ -154,10 +192,9 @@ public class Arena extends World {
 	 * @param b
 	 * @param body
 	 */
-	private void hit(Hurdles b, Body body) {
+	private void hit(Ground b, Body body) {
 		if (body instanceof Player) {
 			hit(b, (Player) body);
-			((Player) body).receiveDamage(10);
 		} 
 	}
 	
@@ -182,10 +219,10 @@ public class Arena extends World {
 	 */
 	private boolean collision(Body b1, BodyFixture f1, Body b2, BodyFixture f2) {
 		
-		if ( b1 instanceof Hurdles && !( b2 instanceof Hurdles ) ) {
-			hit((Hurdles)b1, b2);
-		} else if ( b2 instanceof Hurdles && !( b1 instanceof Hurdles ) ) {
-			hit((Hurdles)b2, b1);
+		if ( b1 instanceof Ground && !( b2 instanceof Ground ) ) {
+			hit((Ground)b1, b2);
+		} else if ( b2 instanceof Ground && !( b1 instanceof Ground ) ) {
+			hit((Ground)b2, b1);
 		}
 		else if ( b2 instanceof Coins && !( b1 instanceof Coins ) ){
 			hit((Coins) b2, b1);			
@@ -202,7 +239,7 @@ public class Arena extends World {
 	 * @param b
 	 * @param p
 	 */
-	private void hit(Hurdles b, Player p) {
+	private void hit(Ground b, Player p) {
 		
 		b.hit(p);
 		if ( ! b.isActive() ) {

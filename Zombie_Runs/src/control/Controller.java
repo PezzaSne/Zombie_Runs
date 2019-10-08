@@ -5,12 +5,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 
 import javax.swing.Timer;
 
 import org.dyn4j.geometry.Vector2;
 
 import model.Arena;
+import model.Ground;
 import model.Player;
 import view.ArenaView;
 
@@ -27,8 +29,9 @@ public class Controller   {
 	private ArenaView view;
 	private Timer timer;
 	private Player runner;
+	private List<Ground> grounds;
 
-	private boolean upPressed, downPressed, leftPressed, rightPressed;
+	private boolean upPressed, downPressed, leftPressed, rightPressed, jumpPressed;
 
 	public KeyListener keyListener;
 	private ActionListener timerListener;
@@ -38,6 +41,7 @@ public class Controller   {
 		this.world = world;
 		this.view = view;
 		this.runner = this.world.getPlayer();
+		this.grounds = this.world.getGround();
 
 		upPressed = false;
 		downPressed = false;
@@ -76,9 +80,8 @@ public class Controller   {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_SPACE)
-				{
-					//SPARA ???
+				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+					jumpPressed = false;
 				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_W) {
 					upPressed = false;
@@ -100,17 +103,23 @@ public class Controller   {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-
+				if (e.getExtendedKeyCode() == KeyEvent.VK_SPACE) {
+					jumpPressed = true;
+				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_W) {
+					view.setAnimation("upPressed");
 					upPressed = true;
 				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_S) {
+					view.setAnimation("downPressed");
 					downPressed = true;
 				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_D) {
+					view.setAnimation("rightPressed");
 					rightPressed = true;
 				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_A) {
+					view.setAnimation("leftPressed");
 					leftPressed = true;
 				}
 			}
@@ -127,22 +136,27 @@ public class Controller   {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if(jumpPressed) {
+				}
 				if(upPressed) {
-					view.setAnimation("upPressed");
-					runner.applyForce(new Vector2(0,1));
+					//runner.applyForce(new Vector2(0,1));
 				}
 				if (downPressed) {
-					view.setAnimation("downPressed");
-					runner.applyForce(new Vector2(0,-1));
+					//runner.applyForce(new Vector2(0,-1));
 				}
 				if (rightPressed) {
-					view.setAnimation("rightPressed");
-					runner.applyForce(new Vector2(1,0));
+					//runner.applyForce(new Vector2(2,0));
+					for(Ground g : grounds) {
+						g.translate(new Vector2(.4,0));
+					}
+					world.addGroundRight();
 				}
-
 				if(leftPressed) {
-					view.setAnimation("leftPressed");
-					runner.applyForce(new Vector2(-1,0));
+					//runner.applyForce(new Vector2(-2,0));
+					for(Ground g : grounds) {
+						g.translate(new Vector2(-.4,0));
+					}
+					world.addGroundLeft();
 				}
 
 				world.updatev(1.0/fps);

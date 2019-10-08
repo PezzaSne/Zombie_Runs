@@ -42,13 +42,7 @@ public class Coins extends Body {
 	}
 	
 	public void update(double elapsedTime) {
-		
-		primaryTimer -= elapsedTime;
-		if(primaryTimer <= 0) {
-			shift(new Vector2(0, -0.02));
-			primaryTimer = primaryTimeout;
-		}	
-		
+		primaryTimer -= elapsedTime;	
 	}
 
 

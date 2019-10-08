@@ -7,9 +7,8 @@ import org.dyn4j.geometry.MassType;
 
 public abstract class Player extends Body {
 	
-	final static double DENSITY = 0.2;
+	final static double DENSITY = 1;
 	final static double DEFAULT_SPEED = 20;
-	final static double MAXSCROLLING = 0.5;
 	
 	BodyFixture fixture;
 	private String name;
@@ -17,16 +16,16 @@ public abstract class Player extends Body {
 	private double currentHealthPoints;
 	protected double score;
 	
-	private double primaryTimeout = 0.5;
+	private double primaryTimeout = .5;
 	private double primaryTimer = primaryTimeout;
 	
 	
 	public Player(String name, double maxHealthPoints) {
 		
-		fixture = new BodyFixture(Geometry.createCircle(0.5));
+		fixture = new BodyFixture(Geometry.createCircle(.5));
 		fixture.setDensity(DENSITY);
-		fixture.setRestitution(.5);
-		fixture.setFriction(2);
+		fixture.setRestitution(.001);
+		fixture.setFriction(.5);
 		
 		addFixture(fixture);
 		setMass(MassType.FIXED_ANGULAR_VELOCITY);

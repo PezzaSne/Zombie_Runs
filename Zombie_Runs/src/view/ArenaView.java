@@ -21,7 +21,7 @@ import org.dyn4j.geometry.Vector2;
 
 import model.Arena;
 import model.Coins;
-import model.Hurdles;
+import model.Ground;
 import model.Player;
 
 /**
@@ -32,28 +32,22 @@ import model.Player;
 @SuppressWarnings("serial")
 public class ArenaView extends JPanel implements IView {
 	
-    private static final int DIM_W = 500;
-    private static final int DIM_H = 1000;
-	private static final int INCREMENT = 1;
+    private static final int DIM_W = 1280;
+    private static final int DIM_H = 720;
 	
 	private final double scaling = 80;
-	
-	private int dx1, dy1, dx2, dy2;
-	private int srcx1, srcy1, srcx2, srcy2;
-	private int IMAGE_HEIGHT;
 
 	private Arena world;
 	
-	private BufferedImage backgroundImg;	//Da risolvere ?!
 	private BufferedImage coinsImg;			//Da convertire in sprite sheet
-	private BufferedImage hurdlImg;			//Da convertire in sprite sheet
+	private BufferedImage groundImg;			//Da convertire in sprite sheet
 	
 	// Images for each animation of the player
 	private BufferedImage[] walkingUp = {Sprite.getSprite(0,3), Sprite.getSprite(2,3)};
 	private BufferedImage[] walkingDown = {Sprite.getSprite(0,0), Sprite.getSprite(2,0)};
 	private BufferedImage[] walkingLeft = {Sprite.getSprite(0, 1), Sprite.getSprite(2, 1)}; 
 	private BufferedImage[] walkingRight = {Sprite.getSprite(0, 2), Sprite.getSprite(2, 2)};
-	private BufferedImage[] stands = {Sprite.getSprite(1, 3)};
+	private BufferedImage[] stands = {Sprite.getSprite(1, 2)};
 
 	// Different player's animations 
 	private Animation walkUp = new Animation(walkingUp, 5);
@@ -73,7 +67,6 @@ public class ArenaView extends JPanel implements IView {
 
 		this.world = world;
 		loadImages();
-		initImagePoints();
 		setPreferredSize(new Dimension(DIM_W, DIM_H));
 		setDoubleBuffered(true);
 
@@ -82,11 +75,11 @@ public class ArenaView extends JPanel implements IView {
 	private void loadImages() {
 
 		try {
-			this.backgroundImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/background.jpg"));
-			this.coinsImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/coin/0.5x/Tavola disegno 1@0.5x.png"));
-			
-            IMAGE_HEIGHT = backgroundImg.getHeight();
-            
+			//this.backgroundImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/background1.jpg"));
+			//this.coinsImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/coin/0.5x/Tavola disegno 1@0.5x.png"));
+			this.groundImg = ImageIO.read(new File("C:/Users/pezza/git/Zombie_Runs/Zombie_Runs/res/ground.png"));
+
+			            
 		} catch (IOException e) {
 
 			e.printStackTrace();
@@ -128,16 +121,17 @@ public class ArenaView extends JPanel implements IView {
 
 		Graphics2D g2d = (Graphics2D) g;
 		transform(g2d);
-		g.drawImage(backgroundImg, dx1, dy1, dx2, dy2, srcx1, srcy1, srcx2, srcy2, this);	// BACKGROUND
-
+		//g.drawImage(backgroundImg, -DIM_W/2, -DIM_H/2,null);	// BACKGROUND
+		setBackground(new Color(135, 206, 235));
+		
 		drawPlayer(g2d, world.getPlayer(), scaling);
 
 		for (Coins c : world.getCoins()) {
 			drawImageOn(g2d,(Coins) c, coinsImg, scaling);
 		}
 
-		for (Hurdles h : world.getHurdles()) {
-			drawImageOn(g2d,  h, hurdlImg, scaling);
+		for (Ground h : world.getGround()) {
+			drawImageOn(g2d,  h, groundImg, scaling);
 		}
 		
 	}
@@ -244,36 +238,8 @@ public class ArenaView extends JPanel implements IView {
 	 */
 	@Override
 	public void update() {
-		moveBackground();
 		player.update();
 		repaint();
 	}
 	
-	/**
-	 * DA FIXARE
-	 */
-    private void initImagePoints() {
-        dx1 = -250;
-        dy1 = -400;
-        dx2 = -250 + DIM_W;
-        dy2 = -400 + DIM_H;
-        srcx1 = 0;
-        srcy1 = 0;
-        srcx2 = DIM_W;
-        srcy2 = DIM_H;
-    }
-	
-    /**
-     * DA FIXARE
-     */
-	public void moveBackground() {
-        if (srcy1 >  IMAGE_HEIGHT) {
-            srcy1 = 0;
-            srcy2 = DIM_H;
-        } else {
-            srcy1 += INCREMENT;
-            srcy2 += INCREMENT;
-        }
-    }
-
 }
